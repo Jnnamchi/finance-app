@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monthly Savings Calculator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 40px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: #718096;
+      font-size: 0.95rem;
+      margin-bottom: 32px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .prefix {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0aec0;
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+      color: #2d3748;
+      outline: none;
+      transition: border-color 0.15s;
+      background: #fafafa;
+    }
+
+    .has-prefix input { padding-left: 30px; }
+
+    input:focus {
+      border-color: #4f46e5;
+      background: #fff;
+    }
+
+    input::placeholder { color: #cbd5e0; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    button:hover { background: #4338ca; }
+    button:active { transform: scale(0.98); }
+
+    .result {
+      display: none;
+      margin-top: 28px;
+      background: #f7f6ff;
+      border: 1.5px solid #c7d2fe;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .result.visible { display: block; }
+
+    .result-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6366f1;
+      margin-bottom: 6px;
+    }
+
+    .result-amount {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #1a202c;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .result-detail {
+      font-size: 0.88rem;
+      color: #718096;
+      line-height: 1.6;
+    }
+
+    .result-detail span {
+      color: #4a5568;
+      font-weight: 600;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 16px 0;
+    }
+
+    .error {
+      display: none;
+      color: #e53e3e;
+      font-size: 0.875rem;
+      margin-top: 10px;
+    }
+
+    .error.visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Monthly Savings Calculator</h1>
+    <p class="subtitle">Find out how much you need to save each month to hit your goal.</p>
+
+    <div class="row">
+      <div class="field">
+        <label>Current Age</label>
+        <div class="input-wrap">
+          <input type="number" id="age" placeholder="e.g. 30" min="1" max="100" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Target Age</label>
+        <div class="input-wrap">
+          <input type="number" id="targetAge" placeholder="e.g. 65" min="1" max="120" />
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Annual Income</label>
+      <div class="input-wrap has-prefix">
+        <span class="prefix">$</span>
+        <input type="number" id="income" placeholder="e.g. 80000" min="0" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Current Savings &amp; Assets</label>
+      <div class="input-wrap has-prefix">
+        <span class="prefix">$</span>
+        <input type="number" id="assets" placeholder="e.g. 25000" min="0" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Financial Goal</label>
+      <div class="input-wrap has-prefix">
+        <span class="prefix">$</span>
+        <input type="number" id="goal" placeholder="e.g. 1000000" min="0" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Expected Annual Return (%)</label>
+      <div class="input-wrap">
+        <input type="number" id="rate" placeholder="e.g. 7  (default: 7%)" min="0" max="30" step="0.1" />
+      </div>
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <p class="error" id="error"></p>
+
+    <div class="result" id="result">
+      <div class="result-label">Monthly Savings Target</div>
+      <div class="result-amount" id="monthly"></div>
+      <div class="result-detail" id="detail"></div>
+      <hr class="divider" />
+      <div class="result-detail" id="context"></div>
+    </div>
+  </div>
+
+  <script>
+    function fmt(n) {
+      return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    }
+
+    function calculate() {
+      const age       = parseFloat(document.getElementById("age").value);
+      const targetAge = parseFloat(document.getElementById("targetAge").value);
+      const income    = parseFloat(document.getElementById("income").value);
+      const assets    = parseFloat(document.getElementById("assets").value) || 0;
+      const goal      = parseFloat(document.getElementById("goal").value);
+      const rateRaw   = document.getElementById("rate").value;
+      const annualRate = rateRaw === "" ? 7 : parseFloat(rateRaw);
+
+      const errorEl  = document.getElementById("error");
+      const resultEl = document.getElementById("result");
+
+      // Validation
+      if (!age || !targetAge || !income || !goal) {
+        errorEl.textContent = "Please fill in all required fields.";
+        errorEl.classList.add("visible");
+        resultEl.classList.remove("visible");
+        return;
+      }
+      if (targetAge <= age) {
+        errorEl.textContent = "Target age must be greater than your current age.";
+        errorEl.classList.add("visible");
+        resultEl.classList.remove("visible");
+        return;
+      }
+      if (assets >= goal) {
+        errorEl.textContent = "You've already reached your goal! Current assets meet or exceed it.";
+        errorEl.classList.add("visible");
+        resultEl.classList.remove("visible");
+        return;
+      }
+
+      errorEl.classList.remove("visible");
+
+      const months = (targetAge - age) * 12;
+      const r = annualRate / 100 / 12; // monthly rate
+
+      let monthly;
+      if (r === 0) {
+        // Simple division if no return
+        monthly = (goal - assets) / months;
+      } else {
+        // Future value of lump sum (current assets compounded)
+        const fvAssets = assets * Math.pow(1 + r, months);
+        const remaining = goal - fvAssets;
+        // PMT formula: remaining = PMT * ((1+r)^n - 1) / r
+        monthly = remaining * r / (Math.pow(1 + r, months) - 1);
+      }
+
+      const monthlyIncome = income / 12;
+      const savingsRate = (monthly / monthlyIncome) * 100;
+      const years = targetAge - age;
+
+      document.getElementById("monthly").textContent = fmt(monthly);
+      document.getElementById("detail").innerHTML =
+        `That's <span>${savingsRate.toFixed(1)}%</span> of your monthly income of <span>${fmt(monthlyIncome)}</span>, ` +
+        `saved over <span>${years} years</span> (${months} months).`;
+
+      document.getElementById("context").innerHTML =
+        `Starting assets: <span>${fmt(assets)}</span> &nbsp;·&nbsp; ` +
+        `Goal: <span>${fmt(goal)}</span> &nbsp;·&nbsp; ` +
+        `Return: <span>${annualRate}% / yr</span>`;
+
+      resultEl.classList.add("visible");
+    }
+
+    // Allow Enter key to trigger calculate
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter") calculate();
+    });
+  </script>
+</body>
+</html>
